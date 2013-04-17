@@ -1,8 +1,7 @@
-default: compress docs
+default: compress doc
 
 compress:
-	@node bin/build.js;
+	@node bin/build.js
 
-docs:
-  @node bin/docs.js;
-  
+doc:
+	@node bin/docs.js
