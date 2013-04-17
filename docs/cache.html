@@ -63,25 +63,14 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              
+              <pre><code>cache.js
+http://github.com/ericz/pjs
+(c) 2013 Eric Zhang</code></pre>
+
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="function"><span class="keyword">function</span> <span class="title">BrowserCache</span> <span class="params">()</span> {</span>
-  
-  <span class="keyword">var</span> self = <span class="keyword">this</span>;
-  
-  <span class="keyword">var</span> request = indexedDB.open(<span class="keyword">this</span>.DB_NAME, <span class="keyword">this</span>.SCHEMA_VERSION);
-  request.onupgradeneeded = <span class="keyword">function</span>(e) {
-    <span class="keyword">var</span> db = e.target.result;
-    <span class="keyword">if</span> (db.objectStoreNames.contains(self.FILESTORE_NAME)) {
-      db.deleteObjectStore(self.FILESTORE_NAME);
-    }
-    <span class="keyword">var</span> store = db.createObjectStore(self.FILESTORE_NAME, {keyPath: <span class="string">'url'</span>});
-  };
-
-  request.onsuccess = <span class="keyword">function</span>(e) {
-    self._db = e.target.result;
-    self._db.onerror = <span class="keyword">function</span>(e) {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>
+<span class="function"><span class="keyword">function</span> <span class="title">BrowserCache</span> <span class="params">()</span> {</span></pre></div></div>
             
         </li>
         
@@ -89,15 +78,12 @@
         <li id="section-2">
             <div class="annotation">
               
-              <div class="pilwrap ">
+              <div class="pilwrap for-h1">
                 <a class="pilcrow" href="#section-2">&#182;</a>
               </div>
-              <p>bubbled erro</p>
+              <h1>Contructor</h1>
 
             </div>
-            
-            <div class="content"><div class='highlight'><pre>      util.log(<span class="string">'Database error'</span>, e);
-    };</pre></div></div>
             
         </li>
         
@@ -108,27 +94,11 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-3">&#182;</a>
               </div>
-              <p>DB ready to use</p>
-
+              
             </div>
             
-            <div class="content"><div class='highlight'><pre>  };
-  
-  request.onerror = <span class="keyword">function</span>(e) {
-    util.log(<span class="string">'Database openning error'</span>, e);
-  };
-}
-
-BrowserCache.prototype.DB_NAME = <span class="string">'pjs'</span>;
-BrowserCache.prototype.FILESTORE_NAME = <span class="string">'files'</span>;
-BrowserCache.prototype.SCHEMA_VERSION = <span class="number">2</span>;
-
-BrowserCache.prototype.getFile = <span class="keyword">function</span>(url, cb) {
-  <span class="keyword">var</span> self = <span class="keyword">this</span>;
-  <span class="keyword">var</span> transaction = <span class="keyword">this</span>._db.transaction([<span class="keyword">this</span>.FILESTORE_NAME]);
-  <span class="keyword">var</span> objectStore = transaction.objectStore(<span class="keyword">this</span>.FILESTORE_NAME);
-  <span class="keyword">var</span> request = objectStore.get(url);
-  request.onerror = <span class="keyword">function</span>(event) {</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  
+  <span class="keyword">var</span> self = <span class="keyword">this</span>;</pre></div></div>
             
         </li>
         
@@ -138,6 +108,201 @@ BrowserCache.prototype.getFile = <span class="keyword">function</span>(url, cb) 
               
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Open up the IndexedDB</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> request = indexedDB.open(<span class="keyword">this</span>.DB_NAME, <span class="keyword">this</span>.SCHEMA_VERSION);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Ensure that we have the correct schema, if not create the correct schema</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  request.onupgradeneeded = <span class="keyword">function</span>(e) {
+    <span class="keyword">var</span> db = e.target.result;
+    <span class="keyword">if</span> (db.objectStoreNames.contains(self.FILESTORE_NAME)) {
+      db.deleteObjectStore(self.FILESTORE_NAME);
+    }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Tables will be keyed by file URL</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">var</span> store = db.createObjectStore(self.FILESTORE_NAME, {keyPath: <span class="string">'url'</span>});
+  };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Upon successful opening of database, store reference to the database</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  request.onsuccess = <span class="keyword">function</span>(e) {
+    self._db = e.target.result;
+    self._db.onerror = <span class="keyword">function</span>(e) {
+      util.log(<span class="string">'Database error'</span>, e);
+    };</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>DB ready to use</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  };
+  
+  request.onerror = <span class="keyword">function</span>(e) {
+    util.log(<span class="string">'Database openning error'</span>, e);
+  };
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Hard coded database name</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>BrowserCache.prototype.DB_NAME = <span class="string">'pjs'</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Hard coded table name</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>BrowserCache.prototype.FILESTORE_NAME = <span class="string">'files'</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Current schema version. This goes up when the schema changes</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>BrowserCache.prototype.SCHEMA_VERSION = <span class="number">2</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <h1>getFile</h1>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p><strong>getFile ( url , callback (err, file) )</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>BrowserCache.prototype.getFile = <span class="keyword">function</span>(url, cb) {
+  <span class="keyword">var</span> self = <span class="keyword">this</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Begin database transaction</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> transaction = <span class="keyword">this</span>._db.transaction([<span class="keyword">this</span>.FILESTORE_NAME]);
+  <span class="keyword">var</span> objectStore = transaction.objectStore(<span class="keyword">this</span>.FILESTORE_NAME);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Get file keyed by provided url</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> request = objectStore.get(url);
+  request.onerror = <span class="keyword">function</span>(event) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
               <p>Handle errors!</p>
 
@@ -150,35 +315,144 @@ BrowserCache.prototype.getFile = <span class="keyword">function</span>(url, cb) 
         </li>
         
         
-        <li id="section-5">
+        <li id="section-17">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-5">&#182;</a>
+                <a class="pilcrow" href="#section-17">&#182;</a>
               </div>
               <p>Do something with the request.result!</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="keyword">var</span> result = event.target.result;
-    <span class="keyword">if</span> (!result) {
-      cb(<span class="keyword">new</span> Error(<span class="string">'No file'</span>), <span class="literal">null</span>);
-    } <span class="keyword">else</span> <span class="keyword">if</span> (result.expiry &gt; (<span class="keyword">new</span> Date()).getTime()) {
-      cb(<span class="literal">null</span>, result);
-    } <span class="keyword">else</span> {
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">var</span> result = event.target.result;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p><strong>Possible results</strong></p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <p>File is not found</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">if</span> (!result) {
+      cb(<span class="keyword">new</span> Error(<span class="string">'No file'</span>), <span class="literal">null</span>);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p>Successfully found valid file</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    } <span class="keyword">else</span> <span class="keyword">if</span> (result.expiry &gt; (<span class="keyword">new</span> Date()).getTime()) {
+      cb(<span class="literal">null</span>, result);</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>Result is expired, remove it from the cache</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    } <span class="keyword">else</span> {
       self.removeFile(url);
       cb(<span class="keyword">new</span> Error(<span class="string">'Expired'</span>), <span class="literal">null</span>);
     }
   };
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <h1>writeFile</h1>
 
-BrowserCache.prototype.writeFile = <span class="keyword">function</span>(url, expiry, data) {
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p><strong>writeFile ( url , expiry, data )</strong></p>
+<p>expiry: integer milliseconds timestamp</p>
+<p>data: file contents as an ArrayBuffer</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>BrowserCache.prototype.writeFile = <span class="keyword">function</span>(url, expiry, data) {
   <span class="keyword">var</span> transaction = <span class="keyword">this</span>._db.transaction([<span class="keyword">this</span>.FILESTORE_NAME], <span class="string">"readwrite"</span>);
   <span class="keyword">var</span> objectStore = transaction.objectStore(<span class="keyword">this</span>.FILESTORE_NAME);
   <span class="keyword">var</span> request = objectStore.add({url: url, expiry: expiry, data: data});
-};
+};</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap for-h1">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <h1>removeFile</h1>
 
-BrowserCache.prototype.removeFile = <span class="keyword">function</span>(url) {
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p><strong>removeFile ( url )</strong></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>BrowserCache.prototype.removeFile = <span class="keyword">function</span>(url) {
   <span class="keyword">var</span> transaction = <span class="keyword">this</span>._db.transaction([<span class="keyword">this</span>.FILESTORE_NAME], <span class="string">"readwrite"</span>);
   <span class="keyword">var</span> objectStore = transaction.objectStore(<span class="keyword">this</span>.FILESTORE_NAME)
   <span class="keyword">var</span> request = objectStore.<span class="keyword">delete</span>(url);
