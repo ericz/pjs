@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>parser.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="cache.html">
+                cache.js
+              </a>
+            
+              
+              <a class="source" href="parser.html">
+                parser.js
+              </a>
+            
+              
+              <a class="source" href="prefetcher.html">
+                prefetcher.js
+              </a>
+            
+              
+              <a class="source" href="util.html">
+                util.js
+              </a>
+            
+              
+              <a class="source" href="validator.html">
+                validator.js
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>parser.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="function"><span class="keyword">function</span> <span class="title">PageParser</span><span class="params">(html)</span> {</span>
+  <span class="keyword">this</span>._html = html;
+  <span class="keyword">this</span>.resources = {};
+  
+  <span class="keyword">this</span>._parse();
+  <span class="keyword">this</span>._extract();
+}
+
+
+
+PageParser.prototype._parse = <span class="keyword">function</span>() {
+  <span class="keyword">this</span>._dom = document.implementation.createHTMLDocument(<span class="string">''</span>);
+  <span class="keyword">this</span>._dom.documentElement.innerHTML = <span class="keyword">this</span>._html;
+}
+
+
+PageParser.prototype._extract = <span class="keyword">function</span>() {
+  <span class="keyword">var</span> els = document.querySelectorAll(<span class="string">'img, script, link'</span>);
+  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; els.length; i++) {
+    <span class="keyword">var</span> el = els[i];
+    <span class="keyword">switch</span>(el.tagName) {
+      <span class="keyword">case</span> <span class="string">'IMG'</span>:
+        <span class="keyword">this</span>._handleImg(el);
+        <span class="keyword">break</span>;
+      <span class="comment">/*case: 'SCRIPT'
+        break;
+      case: 'LINK'
+        break;*/</span>
+    }
+  }
+};
+
+PageParser.prototype._handleImg = <span class="keyword">function</span>(el) {
+  <span class="keyword">this</span>._addURL(util.absoluteURL(el.src), el);
+};
+
+PageParser.prototype._addURL = <span class="keyword">function</span>(url, el){
+  <span class="keyword">if</span> (!<span class="keyword">this</span>.resources[url]) {
+    <span class="keyword">this</span>.resources[url] = [];
+  }
+  <span class="keyword">this</span>.resources[url].push(el);
+};
+
+<span class="comment">/*
+PageParser.prototype._handleScript = function() {
+  var els = document.querySelectorAll('img');
+}
+
+PageParser.prototype._handleLink = function() {
+  var els = document.querySelectorAll('img');
+}*/</span></pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

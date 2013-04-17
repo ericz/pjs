@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>util.js</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page">
+            
+              
+              <a class="source" href="cache.html">
+                cache.js
+              </a>
+            
+              
+              <a class="source" href="parser.html">
+                parser.js
+              </a>
+            
+              
+              <a class="source" href="prefetcher.html">
+                prefetcher.js
+              </a>
+            
+              
+              <a class="source" href="util.html">
+                util.js
+              </a>
+            
+              
+              <a class="source" href="validator.html">
+                validator.js
+              </a>
+            
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+          <li id="title">
+              <div class="annotation">
+                  <h1>util.js</h1>
+              </div>
+          </li>
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> util = {
+  
+  chromeCompatible: <span class="literal">true</span>,
+  firefoxCompatible: <span class="literal">false</span>,
+  
+  chromeVersion: <span class="number">26</span>,
+  firefoxVersion: <span class="number">22</span>,
+
+  debug: <span class="literal">false</span>,
+  
+  inherits: <span class="keyword">function</span>(ctor, superCtor) {
+    ctor.super_ = superCtor;
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: <span class="literal">false</span>,
+        writable: <span class="literal">true</span>,
+        configurable: <span class="literal">true</span>
+      }
+    });
+  },
+  extend: <span class="keyword">function</span>(dest, source) {
+    <span class="keyword">for</span>(<span class="keyword">var</span> key <span class="keyword">in</span> source) {
+      <span class="keyword">if</span>(source.hasOwnProperty(key)) {
+        dest[key] = source[key];
+      }
+    }
+    <span class="keyword">return</span> dest;
+  },
+  pack: BinaryPack.pack,
+  unpack: BinaryPack.unpack,
+
+  
+  log: <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+    <span class="keyword">if</span> (util.debug) {
+      <span class="keyword">var</span> err = <span class="literal">false</span>;
+      <span class="keyword">var</span> copy = Array.prototype.slice.call(arguments);
+      copy.unshift(<span class="string">'PJS: '</span>);
+      <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>, l = copy.length; i &lt; l; i++){
+        <span class="keyword">if</span> (copy[i] <span class="keyword">instanceof</span> Error) {
+          copy[i] = <span class="string">'('</span> + copy[i].name + <span class="string">') '</span> + copy[i].message;
+          err = <span class="literal">true</span>;
+        }
+      }
+      err ? console.error.apply(console, copy) : console.log.apply(console, copy);
+    }
+  },
+
+  setZeroTimeout: (<span class="keyword">function</span>(global) {
+    <span class="keyword">var</span> timeouts = [];
+    <span class="keyword">var</span> messageName = <span class="string">'zero-timeout-message'</span>;</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Like setTimeout, but only takes a function argument.     There&#39;s
+no time argument (always zero) and no arguments (you have to
+use a closure).</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="function"><span class="keyword">function</span> <span class="title">setZeroTimeoutPostMessage</span><span class="params">(fn)</span> {</span>
+      timeouts.push(fn);
+      global.postMessage(messageName, <span class="string">'*'</span>);
+    }		
+
+    <span class="function"><span class="keyword">function</span> <span class="title">handleMessage</span><span class="params">(event)</span> {</span>
+      <span class="keyword">if</span> (event.source == global &amp;&amp; event.data == messageName) {
+        <span class="keyword">if</span> (event.stopPropagation) {
+          event.stopPropagation();
+        }
+        <span class="keyword">if</span> (timeouts.length) {
+          timeouts.shift()();
+        }
+      }
+    }
+    <span class="keyword">if</span> (global.addEventListener) {
+      global.addEventListener(<span class="string">'message'</span>, handleMessage, <span class="literal">true</span>);
+    } <span class="keyword">else</span> <span class="keyword">if</span> (global.attachEvent) {
+      global.attachEvent(<span class="string">'onmessage'</span>, handleMessage);
+    }
+    <span class="keyword">return</span> setZeroTimeoutPostMessage;
+  }(<span class="keyword">this</span>)),
+  
+  blobToArrayBuffer: <span class="keyword">function</span>(blob, cb){
+    <span class="keyword">var</span> fr = <span class="keyword">new</span> FileReader();
+    fr.onload = <span class="keyword">function</span>(evt) {
+      cb(evt.target.result);
+    };
+    fr.readAsArrayBuffer(blob);
+  },
+  blobToBinaryString: <span class="keyword">function</span>(blob, cb){
+    <span class="keyword">var</span> fr = <span class="keyword">new</span> FileReader();
+    fr.onload = <span class="keyword">function</span>(evt) {
+      cb(evt.target.result);
+    };
+    fr.readAsBinaryString(blob);
+  },
+  binaryStringToArrayBuffer: <span class="keyword">function</span>(binary) {
+    <span class="keyword">var</span> byteArray = <span class="keyword">new</span> Uint8Array(binary.length);
+    <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; binary.length; i++) {
+      byteArray[i] = binary.charCodeAt(i) &amp; <span class="number">0xff</span>;
+    }
+    <span class="keyword">return</span> byteArray.buffer;
+  },
+  randomToken: <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+    <span class="keyword">return</span> Math.random().toString(<span class="number">36</span>).substr(<span class="number">2</span>);
+  },
+  
+  absoluteURL: <span class="keyword">function</span>(url) {
+    <span class="keyword">var</span> parser = document.createElement(<span class="string">'a'</span>);
+    parser.href = url;
+    <span class="keyword">return</span> parser.href;
+  },
+  
+  isBrowserCompatible: <span class="keyword">function</span>() {
+    <span class="keyword">var</span> c, f;
+    <span class="keyword">if</span> (<span class="keyword">this</span>.chromeCompatible) {
+      <span class="keyword">if</span> ((c = navigator.userAgent.split(<span class="string">'Chrome/'</span>)) &amp;&amp; c.length &gt; <span class="number">1</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Get version #.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="keyword">var</span> v = c[<span class="number">1</span>].split(<span class="string">'.'</span>)[<span class="number">0</span>];
+        <span class="keyword">return</span> parseInt(v) &gt;= <span class="keyword">this</span>.chromeVersion;
+      }
+    }
+    <span class="keyword">if</span> (<span class="keyword">this</span>.firefoxCompatible) {
+      <span class="keyword">if</span> ((f = navigator.userAgent.split(<span class="string">'Firefox/'</span>)) &amp;&amp; f.length &gt; <span class="number">1</span>) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Get version #.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>        <span class="keyword">var</span> v = f[<span class="number">1</span>].split(<span class="string">'.'</span>)[<span class="number">0</span>];
+        <span class="keyword">return</span> parseInt(v) &gt;= <span class="keyword">this</span>.firefoxVersion;
+      }
+    }
+    <span class="keyword">return</span> <span class="literal">false</span>;
+  }
+};</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>
