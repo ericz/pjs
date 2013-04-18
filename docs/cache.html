@@ -114,7 +114,7 @@ http://github.com/ericz/pjs
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> request = indexedDB.open(<span class="keyword">this</span>.DB_NAME, <span class="keyword">this</span>.SCHEMA_VERSION);</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> request = indexedDB.open(BrowserCache.DB_NAME, BrowserCache.SCHEMA_VERSION);</pre></div></div>
             
         </li>
         
@@ -131,8 +131,8 @@ http://github.com/ericz/pjs
             
             <div class="content"><div class='highlight'><pre>  request.onupgradeneeded = <span class="keyword">function</span>(e) {
     <span class="keyword">var</span> db = e.target.result;
-    <span class="keyword">if</span> (db.objectStoreNames.contains(self.FILESTORE_NAME)) {
-      db.deleteObjectStore(self.FILESTORE_NAME);
+    <span class="keyword">if</span> (db.objectStoreNames.contains(BrowserCache.FILESTORE_NAME)) {
+      db.deleteObjectStore(BrowserCache.FILESTORE_NAME);
     }</pre></div></div>
             
         </li>
@@ -148,7 +148,7 @@ http://github.com/ericz/pjs
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="keyword">var</span> store = db.createObjectStore(self.FILESTORE_NAME, {keyPath: <span class="string">'url'</span>});
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">var</span> store = db.createObjectStore(BrowserCache.FILESTORE_NAME, {keyPath: <span class="string">'url'</span>});
   };</pre></div></div>
             
         </li>
@@ -203,7 +203,7 @@ http://github.com/ericz/pjs
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>BrowserCache.prototype.DB_NAME = <span class="string">'pjs'</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>BrowserCache.DB_NAME = <span class="string">'pjs'</span>;</pre></div></div>
             
         </li>
         
@@ -218,7 +218,7 @@ http://github.com/ericz/pjs
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>BrowserCache.prototype.FILESTORE_NAME = <span class="string">'files'</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>BrowserCache.FILESTORE_NAME = <span class="string">'files'</span>;</pre></div></div>
             
         </li>
         
@@ -233,7 +233,7 @@ http://github.com/ericz/pjs
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>BrowserCache.prototype.SCHEMA_VERSION = <span class="number">2</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>BrowserCache.SCHEMA_VERSION = <span class="number">2</span>;</pre></div></div>
             
         </li>
         
@@ -277,8 +277,8 @@ http://github.com/ericz/pjs
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> transaction = <span class="keyword">this</span>._db.transaction([<span class="keyword">this</span>.FILESTORE_NAME]);
-  <span class="keyword">var</span> objectStore = transaction.objectStore(<span class="keyword">this</span>.FILESTORE_NAME);</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> transaction = <span class="keyword">this</span>._db.transaction([BrowserCache.FILESTORE_NAME]);
+  <span class="keyword">var</span> objectStore = transaction.objectStore(BrowserCache.FILESTORE_NAME);</pre></div></div>
             
         </li>
         
@@ -422,8 +422,8 @@ http://github.com/ericz/pjs
             </div>
             
             <div class="content"><div class='highlight'><pre>BrowserCache.prototype.writeFile = <span class="keyword">function</span>(url, expiry, data) {
-  <span class="keyword">var</span> transaction = <span class="keyword">this</span>._db.transaction([<span class="keyword">this</span>.FILESTORE_NAME], <span class="string">"readwrite"</span>);
-  <span class="keyword">var</span> objectStore = transaction.objectStore(<span class="keyword">this</span>.FILESTORE_NAME);
+  <span class="keyword">var</span> transaction = <span class="keyword">this</span>._db.transaction([BrowserCache.FILESTORE_NAME], <span class="string">"readwrite"</span>);
+  <span class="keyword">var</span> objectStore = transaction.objectStore(BrowserCache.FILESTORE_NAME);
   <span class="keyword">var</span> request = objectStore.add({url: url, expiry: expiry, data: data});
 };</pre></div></div>
             
@@ -454,8 +454,8 @@ http://github.com/ericz/pjs
             </div>
             
             <div class="content"><div class='highlight'><pre>BrowserCache.prototype.removeFile = <span class="keyword">function</span>(url) {
-  <span class="keyword">var</span> transaction = <span class="keyword">this</span>._db.transaction([<span class="keyword">this</span>.FILESTORE_NAME], <span class="string">"readwrite"</span>);
-  <span class="keyword">var</span> objectStore = transaction.objectStore(<span class="keyword">this</span>.FILESTORE_NAME)
+  <span class="keyword">var</span> transaction = <span class="keyword">this</span>._db.transaction([BrowserCache.FILESTORE_NAME], <span class="string">"readwrite"</span>);
+  <span class="keyword">var</span> objectStore = transaction.objectStore(BrowserCache.FILESTORE_NAME)
   <span class="keyword">var</span> request = objectStore.<span class="keyword">delete</span>(url);
 };</pre></div></div>
             
