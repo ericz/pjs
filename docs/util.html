@@ -63,20 +63,105 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              
+              <pre><code>util.js
+http://github.com/ericz/pjs
+(c) 2013 Eric Zhang</code></pre>
+<p>Various utility functions</p>
+
             </div>
             
-            <div class="content"><div class='highlight'><pre><span class="keyword">var</span> util = {
-  
-  chromeCompatible: <span class="literal">true</span>,
-  firefoxCompatible: <span class="literal">false</span>,
-  
-  chromeVersion: <span class="number">26</span>,
-  firefoxVersion: <span class="number">22</span>,
+            <div class="content"><div class='highlight'><pre>
+<span class="keyword">var</span> util = {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>Whether we support Chrome yet</p>
 
-  debug: <span class="literal">false</span>,
-  
-  inherits: <span class="keyword">function</span>(ctor, superCtor) {
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  chromeCompatible: <span class="literal">true</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>Whether we support Firefox yet</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  firefoxCompatible: <span class="literal">false</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Chrome version required for support</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  chromeVersion: <span class="number">26</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Firefox version required for support</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  firefoxVersion: <span class="number">22</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Whether we are in debug mode</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  debug: <span class="literal">false</span>,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>OOP inheritance function as provided by the Node.js util library</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  inherits: <span class="keyword">function</span>(ctor, superCtor) {
     ctor.super_ = superCtor;
     ctor.prototype = Object.create(superCtor.prototype, {
       constructor: {
@@ -86,20 +171,74 @@
         configurable: <span class="literal">true</span>
       }
     });
-  },
-  extend: <span class="keyword">function</span>(dest, source) {
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Shallow extend functions as provided by the Node.js util library</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  extend: <span class="keyword">function</span>(dest, source) {
     <span class="keyword">for</span>(<span class="keyword">var</span> key <span class="keyword">in</span> source) {
       <span class="keyword">if</span>(source.hasOwnProperty(key)) {
         dest[key] = source[key];
       }
     }
     <span class="keyword">return</span> dest;
-  },
-  pack: BinaryPack.pack,
-  unpack: BinaryPack.unpack,
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Binary packing function</p>
 
-  
-  log: <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  pack: BinaryPack.pack,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Binary unpacking functionlk</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  unpack: BinaryPack.unpack,</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Logging function, logs only if debug flag is true</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  log: <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
     <span class="keyword">if</span> (util.debug) {
       <span class="keyword">var</span> err = <span class="literal">false</span>;
       <span class="keyword">var</span> copy = Array.prototype.slice.call(arguments);
@@ -112,28 +251,26 @@
       }
       err ? console.error.apply(console, copy) : console.log.apply(console, copy);
     }
-  },
-
-  setZeroTimeout: (<span class="keyword">function</span>(global) {
-    <span class="keyword">var</span> timeouts = [];
-    <span class="keyword">var</span> messageName = <span class="string">'zero-timeout-message'</span>;</pre></div></div>
+  },</pre></div></div>
             
         </li>
         
         
-        <li id="section-2">
+        <li id="section-12">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
+                <a class="pilcrow" href="#section-12">&#182;</a>
               </div>
-              <p>Like setTimeout, but only takes a function argument.     There&#39;s
-no time argument (always zero) and no arguments (you have to
-use a closure).</p>
+              <p>Runs a callback at end of event queue, optimized for performance using postMessage</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="function"><span class="keyword">function</span> <span class="title">setZeroTimeoutPostMessage</span><span class="params">(fn)</span> {</span>
+            <div class="content"><div class='highlight'><pre>  setZeroTimeout: (<span class="keyword">function</span>(global) {
+    <span class="keyword">var</span> timeouts = [];
+    <span class="keyword">var</span> messageName = <span class="string">'zero-timeout-message'</span>;
+
+    <span class="function"><span class="keyword">function</span> <span class="title">setZeroTimeoutPostMessage</span><span class="params">(fn)</span> {</span>
       timeouts.push(fn);
       global.postMessage(messageName, <span class="string">'*'</span>);
     }		
@@ -154,78 +291,131 @@ use a closure).</p>
       global.attachEvent(<span class="string">'onmessage'</span>, handleMessage);
     }
     <span class="keyword">return</span> setZeroTimeoutPostMessage;
-  }(<span class="keyword">this</span>)),
-  
-  blobToArrayBuffer: <span class="keyword">function</span>(blob, cb){
+  }(<span class="keyword">this</span>)),</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Converts a Blob to ArrayBuffer</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  blobToArrayBuffer: <span class="keyword">function</span>(blob, cb){
     <span class="keyword">var</span> fr = <span class="keyword">new</span> FileReader();
     fr.onload = <span class="keyword">function</span>(evt) {
       cb(evt.target.result);
     };
     fr.readAsArrayBuffer(blob);
-  },
-  blobToBinaryString: <span class="keyword">function</span>(blob, cb){
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p>Converts a Blob to a string encoding</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  blobToBinaryString: <span class="keyword">function</span>(blob, cb){
     <span class="keyword">var</span> fr = <span class="keyword">new</span> FileReader();
     fr.onload = <span class="keyword">function</span>(evt) {
       cb(evt.target.result);
     };
     fr.readAsBinaryString(blob);
-  },
-  binaryStringToArrayBuffer: <span class="keyword">function</span>(binary) {
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Converts a string to its ArrayBuffer representation</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  binaryStringToArrayBuffer: <span class="keyword">function</span>(binary) {
     <span class="keyword">var</span> byteArray = <span class="keyword">new</span> Uint8Array(binary.length);
     <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; binary.length; i++) {
       byteArray[i] = binary.charCodeAt(i) &amp; <span class="number">0xff</span>;
     }
     <span class="keyword">return</span> byteArray.buffer;
-  },
-  randomToken: <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
-    <span class="keyword">return</span> Math.random().toString(<span class="number">36</span>).substr(<span class="number">2</span>);
-  },
-  
-  absoluteURL: <span class="keyword">function</span>(url) {
-    <span class="keyword">var</span> parser = document.createElement(<span class="string">'a'</span>);
-    parser.href = url;
-    <span class="keyword">return</span> parser.href;
-  },
-  
-  isBrowserCompatible: <span class="keyword">function</span>() {
-    <span class="keyword">var</span> c, f;
-    <span class="keyword">if</span> (<span class="keyword">this</span>.chromeCompatible) {
-      <span class="keyword">if</span> ((c = navigator.userAgent.split(<span class="string">'Chrome/'</span>)) &amp;&amp; c.length &gt; <span class="number">1</span>) {</pre></div></div>
+  },</pre></div></div>
             
         </li>
         
         
-        <li id="section-3">
+        <li id="section-16">
             <div class="annotation">
               
               <div class="pilwrap ">
-                <a class="pilcrow" href="#section-3">&#182;</a>
+                <a class="pilcrow" href="#section-16">&#182;</a>
               </div>
-              <p>Get version #.</p>
+              <p>Generate a random token</p>
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>        <span class="keyword">var</span> v = c[<span class="number">1</span>].split(<span class="string">'.'</span>)[<span class="number">0</span>];
+            <div class="content"><div class='highlight'><pre>  randomToken: <span class="function"><span class="keyword">function</span> <span class="params">()</span> {</span>
+    <span class="keyword">return</span> Math.random().toString(<span class="number">36</span>).substr(<span class="number">2</span>);
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Retrieve a normalized absolute URL</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  absoluteURL: <span class="keyword">function</span>(url) {
+    <span class="keyword">var</span> parser = document.createElement(<span class="string">'a'</span>);
+    parser.href = url;
+    <span class="keyword">return</span> parser.href;
+  },</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>Check if browser version matches the required versions</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  isBrowserCompatible: <span class="keyword">function</span>() {
+    <span class="keyword">var</span> c, f;
+    <span class="keyword">if</span> (<span class="keyword">this</span>.chromeCompatible) {
+      <span class="keyword">if</span> ((c = navigator.userAgent.split(<span class="string">'Chrome/'</span>)) &amp;&amp; c.length &gt; <span class="number">1</span>) {
+        <span class="keyword">var</span> v = c[<span class="number">1</span>].split(<span class="string">'.'</span>)[<span class="number">0</span>];
         <span class="keyword">return</span> parseInt(v) &gt;= <span class="keyword">this</span>.chromeVersion;
       }
     }
     <span class="keyword">if</span> (<span class="keyword">this</span>.firefoxCompatible) {
-      <span class="keyword">if</span> ((f = navigator.userAgent.split(<span class="string">'Firefox/'</span>)) &amp;&amp; f.length &gt; <span class="number">1</span>) {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-4">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-4">&#182;</a>
-              </div>
-              <p>Get version #.</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>        <span class="keyword">var</span> v = f[<span class="number">1</span>].split(<span class="string">'.'</span>)[<span class="number">0</span>];
+      <span class="keyword">if</span> ((f = navigator.userAgent.split(<span class="string">'Firefox/'</span>)) &amp;&amp; f.length &gt; <span class="number">1</span>) {
+        <span class="keyword">var</span> v = f[<span class="number">1</span>].split(<span class="string">'.'</span>)[<span class="number">0</span>];
         <span class="keyword">return</span> parseInt(v) &gt;= <span class="keyword">this</span>.firefoxVersion;
       }
     }
