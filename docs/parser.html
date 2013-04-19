@@ -109,7 +109,7 @@ http://github.com/ericz/pjs
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-4">&#182;</a>
               </div>
-              <p>Mapping of URLs to list of HTML elements that require it</p>
+              <p>Mapping of URLs to list of DOM elements that require it</p>
 
             </div>
             
@@ -174,8 +174,8 @@ http://github.com/ericz/pjs
             </div>
             
             <div class="content"><div class='highlight'><pre>PageParser.prototype._parse = <span class="keyword">function</span>() {
-  <span class="keyword">this</span>._dom = document.implementation.createHTMLDocument(<span class="string">''</span>);
-  <span class="keyword">this</span>._dom.documentElement.innerHTML = <span class="keyword">this</span>._html;
+  <span class="keyword">this</span>.dom = document.implementation.createHTMLDocument(<span class="string">''</span>);
+  <span class="keyword">this</span>.dom.documentElement.innerHTML = <span class="keyword">this</span>._html;
 }</pre></div></div>
             
         </li>
@@ -206,7 +206,7 @@ http://github.com/ericz/pjs
             </div>
             
             <div class="content"><div class='highlight'><pre>PageParser.prototype._extract = <span class="keyword">function</span>() {
-  <span class="keyword">var</span> els = document.querySelectorAll(<span class="string">'img, script, link'</span>);</pre></div></div>
+  <span class="keyword">var</span> els = <span class="keyword">this</span>.dom.querySelectorAll(<span class="string">'img, script, link'</span>);</pre></div></div>
             
         </li>
         
