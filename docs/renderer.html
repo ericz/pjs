@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>validator.js</title>
+  <title>renderer.js</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -56,7 +56,7 @@
         
           <li id="title">
               <div class="annotation">
-                  <h1>validator.js</h1>
+                  <h1>renderer.js</h1>
               </div>
           </li>
         
@@ -68,35 +68,24 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <pre><code>validator.js
+              <pre><code>renderer.js
 http://github.com/ericz/pjs
 (c) 2013 Eric Zhang</code></pre>
-<p>Various helper function related to identifying which links to follow and resources to prefetch</p>
+<p>Contains functions to get and set URLs in various HTML element types</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="keyword">var</span> Validator = {</pre></div></div>
-            
-        </li>
-        
-        
-        <li id="section-2">
-            <div class="annotation">
-              
-              <div class="pilwrap ">
-                <a class="pilcrow" href="#section-2">&#182;</a>
-              </div>
-              <p><strong>validatePrefetchLink ( url )</strong></p>
-<p>Determine if the given URL should be prefetched</p>
-
-            </div>
-            
-            <div class="content"><div class='highlight'><pre>  validatePrefetchLink: <span class="keyword">function</span>(url){
-    <span class="keyword">return</span> <span class="literal">true</span>;
+Renderer = {
+  <span class="string">'IMG'</span>: {
+    <span class="function"><span class="keyword">function</span> <span class="title">getUrl</span><span class="params">(el)</span> {</span>
+      <span class="keyword">return</span> el.src;
+    },
+    <span class="function"><span class="keyword">function</span> <span class="title">setUrl</span><span class="params">(el, url)</span> {</span>
+      el.src = url;
+    }
   }
-
-};</pre></div></div>
+}</pre></div></div>
             
         </li>
         
