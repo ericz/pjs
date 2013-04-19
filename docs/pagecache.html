@@ -2,7 +2,7 @@
 
 <html>
 <head>
-  <title>cache.js</title>
+  <title>pagecache.js</title>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
   <link rel="stylesheet" media="all" href="docco.css" />
@@ -61,7 +61,7 @@
         
           <li id="title">
               <div class="annotation">
-                  <h1>cache.js</h1>
+                  <h1>pagecache.js</h1>
               </div>
           </li>
         
@@ -73,15 +73,15 @@
               <div class="pilwrap ">
                 <a class="pilcrow" href="#section-1">&#182;</a>
               </div>
-              <pre><code>cache.js
+              <pre><code>pagecache.js
 http://github.com/ericz/pjs
 (c) 2013 Eric Zhang</code></pre>
-<p>A cache for files similar to the browser cache with expiry support</p>
+<p>Cache for prefetched HTML files that contain other prefetched resources</p>
 
             </div>
             
             <div class="content"><div class='highlight'><pre>
-<span class="function"><span class="keyword">function</span> <span class="title">BrowserCache</span> <span class="params">()</span> {</span></pre></div></div>
+<span class="function"><span class="keyword">function</span> <span class="title">PageCache</span> <span class="params">()</span> {</span></pre></div></div>
             
         </li>
         
@@ -124,7 +124,7 @@ http://github.com/ericz/pjs
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> request = indexedDB.open(BrowserCache.DB_NAME, BrowserCache.SCHEMA_VERSION);</pre></div></div>
+            <div class="content"><div class='highlight'><pre>  <span class="keyword">var</span> request = indexedDB.open(PageCache.DB_NAME, PageCache.SCHEMA_VERSION);</pre></div></div>
             
         </li>
         
@@ -141,8 +141,8 @@ http://github.com/ericz/pjs
             
             <div class="content"><div class='highlight'><pre>  request.onupgradeneeded = <span class="keyword">function</span>(e) {
     <span class="keyword">var</span> db = e.target.result;
-    <span class="keyword">if</span> (db.objectStoreNames.contains(BrowserCache.FILESTORE_NAME)) {
-      db.deleteObjectStore(BrowserCache.FILESTORE_NAME);
+    <span class="keyword">if</span> (db.objectStoreNames.contains(PageCache.FILESTORE_NAME)) {
+      db.deleteObjectStore(PageCache.FILESTORE_NAME);
     }</pre></div></div>
             
         </li>
@@ -158,7 +158,7 @@ http://github.com/ericz/pjs
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>    <span class="keyword">var</span> store = db.createObjectStore(BrowserCache.FILESTORE_NAME, {keyPath: <span class="string">'url'</span>});
+            <div class="content"><div class='highlight'><pre>    <span class="keyword">var</span> store = db.createObjectStore(PageCache.FILESTORE_NAME, {keyPath: <span class="string">'url'</span>});
   };</pre></div></div>
             
         </li>
@@ -213,7 +213,7 @@ http://github.com/ericz/pjs
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>BrowserCache.DB_NAME = <span class="string">'pjs'</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>PageCache.DB_NAME = <span class="string">'pjs'</span>;</pre></div></div>
             
         </li>
         
@@ -228,7 +228,7 @@ http://github.com/ericz/pjs
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>BrowserCache.FILESTORE_NAME = <span class="string">'files'</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>PageCache.FILESTORE_NAME = <span class="string">'html'</span>;</pre></div></div>
             
         </li>
         
@@ -243,7 +243,9 @@ http://github.com/ericz/pjs
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>BrowserCache.SCHEMA_VERSION = <span class="number">2</span>;</pre></div></div>
+            <div class="content"><div class='highlight'><pre>PageCache.SCHEMA_VERSION = <span class="number">0</span>;
+
+<span class="comment">/*</pre></div></div>
             
         </li>
         
@@ -463,11 +465,11 @@ http://github.com/ericz/pjs
 
             </div>
             
-            <div class="content"><div class='highlight'><pre>BrowserCache.prototype.removeFile = <span class="keyword">function</span>(url) {
-  <span class="keyword">var</span> transaction = <span class="keyword">this</span>._db.transaction([BrowserCache.FILESTORE_NAME], <span class="string">"readwrite"</span>);
-  <span class="keyword">var</span> objectStore = transaction.objectStore(BrowserCache.FILESTORE_NAME)
-  <span class="keyword">var</span> request = objectStore.<span class="keyword">delete</span>(url);
-};</pre></div></div>
+            <div class="content"><div class='highlight'><pre>BrowserCache.prototype.removeFile = function(url) {
+  var transaction = this._db.transaction([BrowserCache.FILESTORE_NAME], "readwrite");
+  var objectStore = transaction.objectStore(BrowserCache.FILESTORE_NAME)
+  var request = objectStore.delete(url);
+};*/</pre></div></div>
             
         </li>
         
