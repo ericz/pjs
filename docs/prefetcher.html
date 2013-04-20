@@ -615,7 +615,8 @@ http://github.com/ericz/pjs
             </div>
             
             <div class="content"><div class='highlight'><pre>Prefetcher.prototype._replaceLink = <span class="keyword">function</span>(url){
-  <span class="keyword">this</span>._fillElements(url, <span class="keyword">this</span>._links[url]);
+  <span class="keyword">var</span> fileUrl = <span class="string">'render.html/#'</span> <span class="comment">/* TODO */</span>
+  <span class="keyword">this</span>._fillElements(fileUrl, <span class="keyword">this</span>._links[url]);
 };</pre></div></div>
             
         </li>
