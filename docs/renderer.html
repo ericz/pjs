@@ -89,6 +89,14 @@ http://github.com/ericz/pjs
     <span class="function"><span class="keyword">function</span> <span class="title">setUrl</span><span class="params">(el, url)</span> {</span>
       el.src = url;
     }
+  },
+  <span class="string">'A'</span>: {
+    <span class="function"><span class="keyword">function</span> <span class="title">getUrl</span><span class="params">(el)</span> {</span>
+      <span class="keyword">return</span> el.href;
+    },
+    <span class="function"><span class="keyword">function</span> <span class="title">setUrl</span><span class="params">(el, url)</span> {</span>
+      el.href = url;
+    }
   }
 };</pre></div></div>
             
