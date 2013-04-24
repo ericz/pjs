@@ -1,0 +1,116 @@
+<html>
+<script>
+  
+  // Instrumentation
+  console.time('Render');
+  
+  
+  (function(){
+    // Hard coded database name
+    var DB_NAME = 'pjs';
+    // Hard coded table name
+    var FILESTORE_NAME = 'html';
+    // Current schema version. This goes up when the schema changes
+    var SCHEMA_VERSION = 2;
+
+    var url = location.hash.substring(1);
+    
+    function connectDb(cb){
+      var request = indexedDB.open(DB_NAME, SCHEMA_VERSION);
+    
+      // Ensure that we have the correct schema, if not create the correct schema
+      request.onupgradeneeded = function(e) {
+        var db = e.target.result;
+        if (db.objectStoreNames.contains(FILESTORE_NAME)) {
+          db.deleteObjectStore(FILESTORE_NAME);
+        }
+        // Tables will be keyed by file URL
+        var store = db.createObjectStore(FILESTORE_NAME, {keyPath: 'url'});
+      };
+
+      // Upon successful opening of database, store reference to the database
+      request.onsuccess = function(e) {
+        db = e.target.result;
+        db.onerror = function(e) {
+          console.log('Database error', e);
+        };
+        // DB ready to use
+        
+        // Get and render url given in hashtag
+        return cb(null, db);
+      };
+      
+      request.onerror = function(e) {
+        console.log('Database openning error', e);
+      };
+      
+    }
+    function getFile(db, url, cb){
+      console.log('Getting file', url);
+      // Begin database transaction
+      var transaction = db.transaction([FILESTORE_NAME]);
+      var objectStore = transaction.objectStore(FILESTORE_NAME);
+      
+      // Get file keyed by provided url
+      var request = objectStore.get(url);
+      request.onerror = function(event) {
+        // Handle errors!
+        return cb(new Error(event), null);
+      };
+      request.onsuccess = function(event) {
+        // Do something with the request.result!
+        var result = event.target.result;
+      
+        if (!result) {
+          return cb(new Error('No file'), null);
+          // Successfully found valid file
+        } else {
+          return cb(null, result);
+        }
+      };
+    }
+    function renderDom(html){
+      document.documentElement.innerHTML = html;
+      var scripts = document.querySelectorAll('script');
+      for (var i = 0; i < scripts.length; i++) {
+        var oldScript = scripts[i];
+        var newScript = document.createElement('script');
+        newScript.src = oldScript.src;
+        var script = document.createTextNode(oldScript.innerHTML);
+        newScript.appendChild(script);
+        newScript.async = oldScript.async;
+        oldScript.parentNode.appendChild(newScript);
+        oldScript.remove();
+      }
+      
+      // Instrumentation
+      var newScript = document.createElement('script');
+      var script = document.createTextNode('console.timeEnd("Render");');
+      newScript.appendChild(script);
+      document.documentElement.appendChild(newScript);
+    }
+    function fallback() {
+      console.log('Failed to load page');
+    }
+    
+    
+    // Do stuff
+    connectDb(function(err, db){
+      if (err) {
+        fallback();
+        return;
+      }
+      getFile(db, url, function(err, file){
+        if (err) {
+          fallback();
+          return;
+        }
+        renderDom(file.data);
+      });
+    });
+    
+    
+  })()
+</script>
+</html>
+
