@@ -9,7 +9,8 @@
     // Current schema version. This goes up when the schema changes
     var SCHEMA_VERSION = 2;
 
-    var url = location.hash.substring(1);
+    // Chrome incorrectly interprets hashtags as part of URL for blob urls. This is ghetto hash tag method:
+    var url = window.location.pathname.split('#').pop();
     
     function connectDb(cb){
       var request = indexedDB.open(DB_NAME, SCHEMA_VERSION);
@@ -65,7 +66,7 @@
         }
       };
     }
-    function renderDom(html){
+    function renderDom(html) {
       document.documentElement.innerHTML = html;
       var scripts = document.querySelectorAll('script');
       for (var i = 0; i < scripts.length; i++) {
@@ -79,8 +80,15 @@
         oldScript.remove();
       }
     }
+    
+    function setState(url) {
+      window.history.replaceState({}, '', window.location.origin + '/' + url);
+    }
+    
     function fallback() {
       console.log('Failed to load page');
+      // Redirect user to actual page
+      //window.location.replace(window.location.origin + '/' + url);
     }
     
     
@@ -95,10 +103,22 @@
           fallback();
           return;
         }
+        setState(url);
         renderDom(file.data);
       });
     });
     
+    /*
+    function createTestLink() {
+      $.get('render.html', function(data){
+        console.log(data);
+        data = new Blob([data], {type: 'text/html'});
+        console.log(data);
+        data = URL.createObjectURL(data);
+        console.log(data);
+        $('<a></a>', {href: data + '#projects.html'}).text('asdf').appendTo('body');
+      });
+    }*/
     
   })()
 </script>
