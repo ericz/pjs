@@ -10,6 +10,7 @@
     var SCHEMA_VERSION = 2;
 
     // Chrome incorrectly interprets hashtags as part of URL for blob urls. This is ghetto hash tag method:
+    // We expect this to be an absolute URL
     var url = window.location.pathname.split('#').pop();
     
     function connectDb(cb){
@@ -42,7 +43,7 @@
       };
       
     }
-    function getFile(db, url, cb){
+    function getPage(db, url, cb){
       console.log('Getting file', url);
       // Begin database transaction
       var transaction = db.transaction([PAGESTORE_NAME]);
@@ -85,13 +86,13 @@
     }
     
     function setState(url) {
-      window.history.replaceState({}, '', window.location.origin + '/' + url);
+      window.history.replaceState({}, '', url);
     }
     
     function fallback() {
       console.log('Failed to load page');
       // Redirect user to actual page
-      // window.location.replace(window.location.origin + '/' + url);
+      // window.location.replace(url);
     }
     
     
@@ -101,7 +102,7 @@
         fallback();
         return;
       }
-      getFile(db, url, function(err, file){
+      getPage(db, url, function(err, file){
         if (err) {
           fallback();
           return;
