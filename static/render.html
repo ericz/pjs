@@ -1,10 +1,6 @@
 <html>
 <script>
   
-  // Instrumentation
-  console.time('Render');
-  
-  
   (function(){
     // Hard coded database name
     var DB_NAME = 'pjs';
@@ -82,12 +78,6 @@
         oldScript.parentNode.appendChild(newScript);
         oldScript.remove();
       }
-      
-      // Instrumentation
-      var newScript = document.createElement('script');
-      var script = document.createTextNode('console.timeEnd("Render");');
-      newScript.appendChild(script);
-      document.documentElement.appendChild(newScript);
     }
     function fallback() {
       console.log('Failed to load page');
