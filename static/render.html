@@ -6,8 +6,9 @@
     var DB_NAME = 'pjs';
     // Hard coded table name
     var PAGESTORE_NAME = 'html';
+    var FILESTORE_NAME = 'files';
     // Current schema version. This goes up when the schema changes
-    var SCHEMA_VERSION = 2;
+    var SCHEMA_VERSION = 3;
 
     // Chrome incorrectly interprets hashtags as part of URL for blob urls. This is ghetto hash tag method:
     // We expect this to be an absolute URL
@@ -19,6 +20,11 @@
       // Ensure that we have the correct schema, if not create the correct schema
       request.onupgradeneeded = function(e) {
         var db = e.target.result;
+        if (db.objectStoreNames.contains(FILESTORE_NAME)) {
+          db.deleteObjectStore(FILESTORE_NAME);
+        }
+        // Tables will be keyed by file URL
+        var store = db.createObjectStore(FILESTORE_NAME, {keyPath: 'url'});
         if (db.objectStoreNames.contains(PAGESTORE_NAME)) {
           db.deleteObjectStore(PAGESTORE_NAME);
         }
