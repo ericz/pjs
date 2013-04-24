@@ -46,7 +46,6 @@ var base = [
   , 'validator.js'
   , 'cache.js'
   , 'net.js'
-  , 'pagecache.js'
   , 'parser.js'
   , 'prefetcher.js'
 ];
