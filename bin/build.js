@@ -42,6 +42,12 @@ var base = [
   , '../deps/js-binarypack/lib/binarypack.js'
   , '../deps/EventEmitter/EventEmitter.js'
   , 'util.js'  
+  , 'renderer.js'
+  , 'validator.js'
+  , 'cache.js'
+  , 'pagecache.js'
+  , 'parser.js'
+  , 'prefetcher.js'
 ];
 
 
