@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html dir="ltr" lang="en-US">
+<head>
+  <meta charset="utf-8">
+
+  <title>Preloader</title>
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/normalize/2.1.0/normalize.css">
+  <link rel="stylesheet" href="css/demo.css">
+</head>
+
+<body>
+
+  <pre id="brackets">{<span id="timer">&nbsp;</span>}</pre>
+
+  <table class="hidden">
+    <tr>
+      <td id="leftms" class="red">0 ms</td>
+      <td id="rightms" class="red">0 ms</td>
+    </tr>
+    <tr class="frames">
+      <td><iframe id="nopjs" frameborder="0"></iframe></td>
+      <td><iframe id="pjs" frameborder="0"></iframe></td>
+    </tr>
+  </table>
+
+  <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>
+    $(function () {
+      var timer = $('#timer');
+      var brackets = $('#brackets');
+      var html = $('html');
+      var body = $('body');
+      var table = $('table').first()
+      var nopjs = $('#nopjs');
+      var pjs = $('#pjs');
+
+      console.log('bang');
+
+      var clicked = false;
+      html.on('click', function() {
+        if (clicked) {
+          return;
+        }
+        clicked = true;
+
+        var c = 3;
+        timer.text(c);
+        c--;
+        var interval = setInterval(function() {
+          if (c === 0) {
+            clearInterval(interval);
+            loadFrames();
+            return
+          }
+          timer.text(c);
+          c--;
+        }, 1000);
+      })
+      function loadFrames() {
+        brackets.remove();
+        table.removeClass('hidden')
+
+        nopjs.attr('src', "amazon.html")
+        pjs.attr('src', "amazon.html")
+        // TODO look into iframes and see the onload number
+
+        html.on('click', function() {
+          loadSoccer()
+        });
+      }
+      function loadSoccer() {
+        nopjs.attr('src', "soccer.html")
+        pjs.attr('src', "soccer.html")
+        // TODO: onload perf
+      }
+      if (window.location.hash === '#table') {
+        loadFrames()
+      }
+      if (window.location.hash === '#soccer') {
+        brackets.remove()
+        table.removeClass('hidden')
+        loadSoccer()
+      }
+    });
+  </script>
+</body>
+</html>
