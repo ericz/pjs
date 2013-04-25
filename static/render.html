@@ -2,6 +2,7 @@
 <script>
   
   (function(){
+
     // Hard coded database name
     var DB_NAME = 'pjs';
     // Hard coded table name
@@ -12,7 +13,7 @@
 
     // Chrome incorrectly interprets hashtags as part of URL for blob urls. This is ghetto hash tag method:
     // We expect this to be an absolute URL
-    var url = window.location.pathname.split('#').pop();
+    var url = window.location.hash.substring(1) || window.location.pathname.split('#').pop();
     
     function connectDb(cb){
       var request = indexedDB.open(DB_NAME, SCHEMA_VERSION);
@@ -39,7 +40,6 @@
           console.log('Database error', e);
         };
         // DB ready to use
-        
         // Get and render url given in hashtag
         return cb(null, db);
       };
@@ -74,6 +74,8 @@
       };
     }
     function renderDom(html) {
+      // Ensures state is in right place
+      setState(url);
       // TODO:
       // Switch out old images for prefetched images before rendering
       
@@ -102,21 +104,30 @@
     }
     
     
-    // Do stuff
-    connectDb(function(err, db){
-      if (err) {
-        fallback();
-        return;
-      }
-      getPage(db, url, function(err, file){
+    // Init
+    var html = window.localStorage.getItem(url);
+    if (html != null) {
+      console.log('Got from localStorage');
+      // Got data from local storage yay!
+      renderDom(html);
+    } else {
+      // We have to go to the db
+      // Do stuff
+      console.log('Got from DB');
+      connectDb(function(err, db){
         if (err) {
           fallback();
           return;
         }
-        setState(url);
-        renderDom(file.data);
+        getPage(db, url, function(err, file){
+          if (err) {
+            fallback();
+            return;
+          }
+          renderDom(file.data);
+        });
       });
-    });
+    }
     
     /*
     Testing function for browser. It's here because I don't have anywhere else to stow it
