@@ -12,7 +12,7 @@
 <body>
 
   <pre id="brackets">{<span id="timer">&nbsp;</span>}</pre>
-
+  <div id="nav"><button>Go!</button></div>
   <table class="hidden">
     <tr>
       <td id="leftms" class="red">0 ms</td>
@@ -36,6 +36,7 @@
       var pjs = $('#pjs');
       leftms = $('#leftms');
       rightms = $('#rightms');
+      var button = $('button')
 
       console.log('bang');
 
@@ -53,6 +54,8 @@
         rightms
           .removeClass('red').addClass('green')
           .text(Math.round(onloadtime) + ' ms');
+
+          setTimeout(function () { button.show() }, 3000);
       };
 
       html.on('click', function() {
@@ -78,9 +81,10 @@
         table.removeClass('hidden')
         leftms.html('&nbsp;')
         rightms.html('&nbsp;')
+        button.hide().text('click first bike!')
 
-        pjs[0].src = 'amazonr.html'
         nopjs[0].src = 'amazonl.html'
+        pjs[0].src = 'amazonr.html'
 
 
         // TODO look into iframes and see the onload number
@@ -96,6 +100,7 @@
         rightms.html('&nbsp;')
         leftms.removeClass('green').addClass('red')
         rightms.removeClass('green').addClass('red')
+        button.css({ visibility: 'hidden' }); // hide forever
 
         pjs[0].src = 'soccerr.html'
         nopjs[0].src = 'soccerl.html'
