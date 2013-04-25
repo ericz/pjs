@@ -1,10 +1,14 @@
+html, body {
+  height: 100%;
+}
 body {
   padding: 0;
   margin: 0;
   background: #21617d url(../images/bg.jpg);
-  overflow-y: scroll;
+
   font-family: Apex, 'Helvetica Neue', HelveticaNeue, 'Lucida Grande',
   Helvetica, Arial, sans-serif;
+
 }
 .hidden {
   display: none;
@@ -40,6 +44,7 @@ table {
   margin-top: 0;
   width: 100%;
   border-spacing: 0;
+  height: 100%;
 }
 td, tr {
   margin-top: 0;
@@ -59,8 +64,14 @@ td + td {
   border: none;
   border-left: 2px solid black;
 }
+
+.frames,
 .frames > td {
+  height: 90%;
+}
+.frames > td > iframe {
   height: 100%;
+  width: 100%;
 }
 
 .red {

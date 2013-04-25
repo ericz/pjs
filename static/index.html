@@ -5,7 +5,7 @@
 
   <title>Preloader</title>
   <link rel="shortcut icon" href="favicon.ico?pjs">
-  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/normalize/2.1.0/normalize.css">
+  <link rel="stylesheet" href="css/normalize.min.css">
   <link rel="stylesheet" href="css/demo.css">
 </head>
 
@@ -24,7 +24,7 @@
     </tr>
   </table>
 
-  <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="js/jquery.min.js"></script>
   <script>
     $(function () {
       var timer = $('#timer');
@@ -34,8 +34,8 @@
       var table = $('table').first()
       var nopjs = $('#nopjs');
       var pjs = $('#pjs');
-      var leftms = $('#leftms');
-      var rightms = $('#rightms');
+      leftms = $('#leftms');
+      rightms = $('#rightms');
 
       console.log('bang');
 
@@ -44,7 +44,7 @@
         var onloadtime = nopjswindow.performance.now()
         leftms
           .removeClass('red').addClass('green')
-          .text(Math.round(onloadtime) + ' ms');
+          .text(Math.round(onloadtime-16) + ' ms');
       };
 
       var pjswindow = pjs[0].contentWindow
@@ -69,8 +69,9 @@
           c--;
         }, 1000);
       })
-      var lfcalled = false
-      function loadFrames() {
+
+      var lfcalled = false;
+      loadFrames = function loadFrames() {
         if (lfcalled) return
         lfcalled = true
         brackets.remove();
@@ -78,15 +79,16 @@
         leftms.html('&nbsp;')
         rightms.html('&nbsp;')
 
-        nopjs[0].src = 'amazonl.html'
         pjs[0].src = 'amazonr.html'
+        nopjs[0].src = 'amazonl.html'
+
 
         // TODO look into iframes and see the onload number
         html.on('click', function() {
           loadSoccer();
         });
       }
-      var lscalled =  false
+      var lscalled = false
       function loadSoccer() {
         if (lscalled) return
         lscalled = true
@@ -95,13 +97,13 @@
         leftms.removeClass('green').addClass('red')
         rightms.removeClass('green').addClass('red')
 
-        nopjs[0].src = 'soccerl.html'
         pjs[0].src = 'soccerr.html'
+        nopjs[0].src = 'soccerl.html'
       }
-      if (window.location.hash === '#table') {
-        loadFrames()
+      if (location.hash === '#table') {
+        loadFrames();
       }
-      if (window.location.hash === '#soccer') {
+      if (location.hash === '#soccer') {
         brackets.remove()
         table.removeClass('hidden')
         loadSoccer()
