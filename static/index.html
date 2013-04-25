@@ -4,6 +4,7 @@
   <meta charset="utf-8">
 
   <title>Preloader</title>
+  <link rel="shortcut icon" href="favicon.ico?pjs">
   <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/normalize/2.1.0/normalize.css">
   <link rel="stylesheet" href="css/demo.css">
 </head>
@@ -33,16 +34,28 @@
       var table = $('table').first()
       var nopjs = $('#nopjs');
       var pjs = $('#pjs');
+      var leftms = $('#leftms');
+      var rightms = $('#rightms');
 
       console.log('bang');
 
-      var clicked = false;
-      html.on('click', function() {
-        if (clicked) {
-          return;
-        }
-        clicked = true;
+      var nopjswindow = nopjs[0].contentWindow
+      nopjs[0].onload = function() {
+        var onloadtime = nopjswindow.performance.now()
+        leftms
+          .removeClass('red').addClass('green')
+          .text(Math.round(onloadtime) + ' ms');
+      };
 
+      var pjswindow = pjs[0].contentWindow
+      pjs[0].onload = function() {
+        var onloadtime = pjswindow.performance.now();
+        rightms
+          .removeClass('red').addClass('green')
+          .text(Math.round(onloadtime) + ' ms');
+      };
+
+      html.on('click', function() {
         var c = 3;
         timer.text(c);
         c--;
@@ -56,22 +69,34 @@
           c--;
         }, 1000);
       })
+      var lfcalled = false
       function loadFrames() {
+        if (lfcalled) return
+        lfcalled = true
         brackets.remove();
         table.removeClass('hidden')
+        leftms.html('&nbsp;')
+        rightms.html('&nbsp;')
 
-        nopjs.attr('src', "amazon.html")
-        pjs.attr('src', "amazon.html")
+        nopjs[0].src = 'amazonl.html'
+        pjs[0].src = 'amazonr.html'
+
         // TODO look into iframes and see the onload number
-
         html.on('click', function() {
-          loadSoccer()
+          loadSoccer();
         });
       }
+      var lscalled =  false
       function loadSoccer() {
-        nopjs.attr('src', "soccer.html")
-        pjs.attr('src', "soccer.html")
-        // TODO: onload perf
+        if (lscalled) return
+        lscalled = true
+        leftms.html('&nbsp;')
+        rightms.html('&nbsp;')
+        leftms.removeClass('green').addClass('red')
+        rightms.removeClass('green').addClass('red')
+
+        nopjs[0].src = 'soccerl.html'
+        pjs[0].src = 'soccerr.html'
       }
       if (window.location.hash === '#table') {
         loadFrames()
