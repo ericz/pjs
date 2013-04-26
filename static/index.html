@@ -7,6 +7,10 @@
   <link rel="shortcut icon" href="favicon.ico?pjs">
   <link rel="stylesheet" href="css/normalize.min.css">
   <link rel="stylesheet" href="css/demo.css">
+  <script src="js/p.js"></script>
+  <script>
+    window.onload = function() {pjs = new Prefetcher()};
+  </script>
 </head>
 
 <body>
@@ -83,8 +87,10 @@
         rightms.html('&nbsp;')
         button.hide().text('click first bike!')
 
+        var prefetched_link = document.getElementById('azlink').href;
+        pjs[0].src = prefetched_link;
         nopjs[0].src = 'amazonl.html'
-        pjs[0].src = 'amazonr.html'
+        
 
 
         // TODO look into iframes and see the onload number
@@ -101,8 +107,9 @@
         leftms.removeClass('green').addClass('red')
         rightms.removeClass('green').addClass('red')
         button.css({ visibility: 'hidden' }); // hide forever
-
-        pjs[0].src = 'soccerr.html'
+        
+        var prefetched_link = childGetElementById('azlink2').href;
+        pjs[0].src = prefetched_link;
         nopjs[0].src = 'soccerl.html'
       }
       if (location.hash === '#table') {
@@ -115,5 +122,6 @@
       }
     });
   </script>
+  <a href="./amazonr.html" style="display: none" id="azlink"></a>
 </body>
 </html>

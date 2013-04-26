@@ -7,9 +7,10 @@
 
 <script src="js/p.js"></script>
 <script>
+  parent.childGetElementById = function (id) {return document.getElementById(id);}
   setTimeout(function(){
     window.pjs = new Prefetcher();
-  }, 1000);
+  }, 2000);
 </script>
 
 
@@ -413,13 +414,7 @@ div.list div.addtocart .addToCartCssButton {
 
 </style>
 
-<noscript>
-&lt;style type="text/css"&gt;
-#custPrefBanner {
-  display: none;
-}
-&lt;/style&gt;
-</noscript>
+
 <title>Amazon.com: bike: Sports &amp; Outdoors</title>
 
 <meta name="description" content="Online shopping for Sports &amp; Outdoors at Amazon.com">
@@ -1028,7 +1023,7 @@ div#ns_1JZF0PNAVDJFKX10G76K_2489_hidden a
           </div>
         </div>
 <h3 class="newaps">
-    <a href="./soccerr.html"><span class="lrg bold">Takara Kabuto Single Speed Road Bike</span></a> </h3>
+    <a href="./soccerr.html" id="azlink2"><span class="lrg bold">Takara Kabuto Single Speed Road Bike</span></a> </h3>
 
 <ul class="rsltGridList grey">
 
