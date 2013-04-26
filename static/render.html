@@ -108,10 +108,12 @@
       for (var i = 0; i < scripts.length; i++) {
         var oldScript = scripts[i];
         var newScript = document.createElement('script');
-        newScript.src = oldScript.src;
-        var script = document.createTextNode(oldScript.innerHTML);
-        newScript.appendChild(script);
         newScript.async = oldScript.async;
+        var oldScriptSrc = oldScript.getAttribute('src');
+        if (!oldScriptSrc) {
+          oldScriptSrc = URL.createObjectURL(new Blob([oldScript.innerHTML]));
+        }
+        newScript.setAttribute('src', oldScriptSrc);
         oldScript.parentNode.appendChild(newScript);
         oldScript.remove();
       }
@@ -240,7 +242,7 @@
         getUrl: function(el) {
           return el.getAttribute('href');
         },
-        getUrl: function(el) {
+        getAbsoluteUrl: function(el) {
           return el.href;
         },
         setUrl: function(el, url) {
@@ -255,6 +257,27 @@
         },
         isLoaded: function(el) {
           return true;
+        }
+      },
+      'LINK': {
+        getUrl: function(el) {
+          return el.getAttribute('href');
+        },
+        getAbsoluteUrl: function(el) {
+          return el.href;
+        },
+        setUrl: function(el, url) {
+          el.setAttribute('href', url);
+        },
+        stowUrl: function(el) {
+          el.dataset.href = el.getAttribute('href');
+          el.removeAttribute('href');
+        },
+        getStowedUrl: function(el) {
+          return el.dataset.href
+        },
+        isLoaded: function(el) {
+          return false;
         }
       }
     };
