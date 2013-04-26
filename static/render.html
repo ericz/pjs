@@ -122,12 +122,15 @@
     function postprocess(db) {
       console.log('Postprocessing');
       var els = document.querySelectorAll("[data-prefetched='true']");
+      
       for (var i = 0; i < els.length; i++) {
         var el = els[i];
-        if (!Renderer[el.tagName].isLoaded(el)) {
+        //console.log('retrieveing', abs(Renderer[el.tagName].getStowedUrl(el)));
+        //if (!Renderer[el.tagName].isLoaded(el)) {
           // TODO: support more than just IMG
-          retrieveResource(db, Renderer[el.tagName].getAbsoluteUrl(el), el);
-        }
+         // console.log('ok');
+          retrieveResource(db, absoluteUrl(Renderer[el.tagName].getStowedUrl(el)), el);
+       // }
       }
     }
     
@@ -216,6 +219,12 @@
     // Contains functions to get and set URLs in various HTML element types
     // We can't use shortcuts like '.src' because those don't work without a origin context for pages, which is the case for virtual DOMs that we sometime use
 
+    function absoluteUrl (url) {
+      var parser = document.createElement('a');
+      parser.href = url;
+      return parser.href;
+    }
+    
     var Renderer = {
       'IMG': {
         getUrl: function(el) {
