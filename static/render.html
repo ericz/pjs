@@ -136,6 +136,10 @@
     
     function retrieveResource(db, url, el) {
       getFile(db, url, function(err, file){
+        if (err || !file) {
+          console.log('FALLBACK NEEDED', arguments[1]);
+          return;
+        }
         // TODO: Fix mime types
         var blobUrl = URL.createObjectURL(new Blob([new Uint8Array(file.data)]));
         console.log('Rendering', url);
