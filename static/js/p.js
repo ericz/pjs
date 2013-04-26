@@ -977,7 +977,9 @@ var Renderer = {
     },
     isLoaded: function(el) {
       return el.complete;
-    }
+    },
+    attr: 'src',
+    prerender: false
   },
   'A': {
     getUrl: function(el) {
@@ -998,7 +1000,9 @@ var Renderer = {
     },
     isLoaded: function(el) {
       return true;
-    }
+    },
+    attr: 'href',
+    prerender: false
   },
   'LINK': {
     getUrl: function(el) {
@@ -1019,7 +1023,9 @@ var Renderer = {
     },
     isLoaded: function(el) {
       return false;
-    }
+    },
+    attr: 'href',
+    prerender: true
   }
 };//     validator.js
 //     http://github.com/ericz/pjs
@@ -1511,9 +1517,14 @@ Prefetcher.prototype._setPrefetchedElements = function(els){
   var pages = {};
   for (var i = 0; i < els.length; i++) {
     var el = els[i];
+    
+    if (Renderer[el.tagName].prerender) {
+      el.dataset.prefetchedprerender = Renderer[el.tagName].attr + '|' + Renderer[el.tagName].getUrl(el);
+    } else {
+      el.dataset.prefetched = true;
+    }
     // Stow would disable the element
-    // Renderer[el.tagName].stowUrl(el);
-    el.dataset.prefetched = true;
+    Renderer[el.tagName].stowUrl(el);
     pages[el.ownerDocument._url] = true;
   }
   // Update affected pages
@@ -1547,13 +1558,13 @@ Prefetcher.prototype._writePage = function(url) {
   var dom = this._pages[url];
   var html = dom.documentElement.innerHTML; /* TODO  Does using innerHTML (excludes the <html> tag) fuck anything up? */
   
-  try {
+ // try {
     // Write in localStorage for bonus performance
-    localStorage.setItem(url, html);
-  } catch (e) {
+   // localStorage.setItem(url, html);
+ // } catch (e) {
     // Local storage full, write into indexedDB
     this._cache.writePage(url, html);
-  }
+ // }
 };
 
 // _replaceLink
