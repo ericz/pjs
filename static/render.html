@@ -3,6 +3,11 @@
   
   (function(){
 
+    // Ghetto temporary matching attributes to tagName
+    var TYPES = {
+      'IMG' : 'src',
+    };
+  
     // Hard coded database name
     var DB_NAME = 'pjs';
     // Hard coded table name
@@ -50,36 +55,55 @@
       
     }
     function getPage(db, url, cb){
-      console.log('Getting file', url);
-      // Begin database transaction
-      var transaction = db.transaction([PAGESTORE_NAME]);
-      var objectStore = transaction.objectStore(PAGESTORE_NAME);
-      
-      // Get file keyed by provided url
-      var request = objectStore.get(url);
-      request.onerror = function(event) {
-        // Handle errors!
-        return cb(new Error(event), null);
-      };
-      request.onsuccess = function(event) {
-        // Do something with the request.result!
-        var result = event.target.result;
-      
+      get(db, PAGESTORE_NAME, url, function(err, result){
         if (!result) {
           return cb(new Error('No file'), null);
           // Successfully found valid file
         } else {
           return cb(null, result);
         }
+      });
+    }
+    function getFile(db, url, cb){
+      get(db, FILESTORE_NAME, url, function(err, result){
+        if (err || !result) {
+          cb(new Error('No file'), null);
+        } else if (result.expiry > Date.now()) {
+          // Successfully found valid file
+          cb(null, result);
+        } else {
+          // Result is expired, remove it from the cache
+          // TODO: Removed expired file from cache
+          //cb(new Error('Expired'), null);
+          cb(null, result);
+        }
+      });
+    }
+    
+    function get(db, store, key, cb) {
+      var transaction = db.transaction([store]);
+      var objectStore = transaction.objectStore(store);
+      
+      // Get file keyed by provided key
+      var request = objectStore.get(key);
+      request.onerror = function(event) {
+        // Handle errors!
+        return cb(new Error(event), null);
+      };
+      request.onsuccess = function(event) {
+        // Do something with the request.result!
+        cb(null, event.target.result);
       };
     }
+    
     function renderDom(html) {
-      // Ensures state is in right place
-      setState(url);
       // TODO:
       // Switch out old images for prefetched images before rendering
       
       document.documentElement.innerHTML = html;
+    }
+    
+    function resetJs() {
       var scripts = document.querySelectorAll('script');
       for (var i = 0; i < scripts.length; i++) {
         var oldScript = scripts[i];
@@ -93,6 +117,27 @@
       }
     }
     
+    function postprocess(db) {
+      console.log('Postprocessing');
+      var els = document.querySelectorAll("[data-prefetched='true']");
+      for (var i = 0; i < els.length; i++) {
+        var el = els[i];
+        if (!Renderer[el.tagName].isLoaded(el)) {
+          // TODO: support more than just IMG
+          retrieveResource(db, Renderer[el.tagName].getAbsoluteUrl(el), el);
+        }
+      }
+    }
+    
+    function retrieveResource(db, url, el) {
+      getFile(db, url, function(err, file){
+        // TODO: Fix mime types
+        var blobUrl = URL.createObjectURL(new Blob([new Uint8Array(file.data)]));
+        console.log('Rendering', url);
+        Renderer[el.tagName].setUrl(el, blobUrl);
+      });
+    }
+    
     function setState(url) {
       window.history.replaceState({}, '', url);
     }
@@ -103,13 +148,28 @@
       // window.location.replace(url);
     }
     
+    function display(html) {
+      // Ensures state is in right place
+      setState(url);
+      renderDom(html);
+      resetJs();
+    }
+    
     
     // Init
     var html = window.localStorage.getItem(url);
     if (html != null) {
       console.log('Got from localStorage');
       // Got data from local storage yay!
-      renderDom(html);
+      display(html);
+      connectDb(function(err, db){
+        if (err) {
+          console.log('Could not open DB for post processing');
+          return;
+        }
+        // Replace images with those from DB
+        postprocess(db);
+      });
     } else {
       // We have to go to the db
       // Do stuff
@@ -121,10 +181,13 @@
         }
         getPage(db, url, function(err, file){
           if (err) {
+            console.log('Could not find page');
             fallback();
             return;
           }
-          renderDom(file.data);
+          display(file.data);
+          // Replace images with those from DB
+          postprocess(db);
         });
       });
     }
@@ -141,8 +204,65 @@
         $('<a></a>', {href: data + '#projects.html'}).text('asdf').appendTo('body');
       });
     }*/
+  
+  
+  
+    //     renderer.js
+    //     http://github.com/ericz/pjs
+    //     (c) 2013 Eric Zhang
+    //
+    // Contains functions to get and set URLs in various HTML element types
+    // We can't use shortcuts like '.src' because those don't work without a origin context for pages, which is the case for virtual DOMs that we sometime use
+
+    var Renderer = {
+      'IMG': {
+        getUrl: function(el) {
+          return el.getAttribute('src');
+        },
+        getAbsoluteUrl: function(el) {
+          return el.src;
+        },
+        setUrl: function(el, url) {
+          el.setAttribute('src', url);
+        },
+        stowUrl: function(el) {
+          el.dataset.src = el.getAttribute('src');
+          el.removeAttribute('src');
+        },
+        getStowedUrl: function(el) {
+          return el.dataset.src
+        },
+        isLoaded: function(el) {
+          return el.complete;
+        }
+      },
+      'A': {
+        getUrl: function(el) {
+          return el.getAttribute('href');
+        },
+        getUrl: function(el) {
+          return el.href;
+        },
+        setUrl: function(el, url) {
+          el.setAttribute('href', url);
+        },
+        stowUrl: function(el) {
+          el.dataset.href = el.getAttribute('href');
+          el.removeAttribute('href');
+        },
+        getStowedUrl: function(el) {
+          return el.dataset.href
+        },
+        isLoaded: function(el) {
+          return true;
+        }
+      }
+    };
     
   })()
+  
+  
+  
 </script>
 </html>
 
