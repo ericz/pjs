@@ -119,45 +119,6 @@
       }
     }
     
-    function preprocess(db, html, cb) {
-      b = html;
-      var files = {};
-      var re = /data\-prefetchedprerender="[A-Za-z]+\|([^"]+)"/g
-      var match;
-      while (match = re.exec(html)) {
-        files[absoluteUrl(match[1])] = null;
-      }
-      
-      var fileUrls = Object.keys(files);
-      var found = 0;
-      
-      for (var i = 0; i < fileUrls.length; i++) {
-      
-        getFile(db, fileUrls[i], function(err, file){
-          found++;
-          if (err || !file) {
-            console.log('FALLBACK NEEDED', arguments);
-            return;
-          }
-          // TODO: Fix mime types
-          var blobUrl = URL.createObjectURL(new Blob([new Uint8Array(file.data)]));
-          console.log('Prerendering', file.url);
-          files[file.url] = blobUrl;
-          if (found == fileUrls.length) {
-            preprocessRender(html, files, cb);
-          }
-        });
-      }
-    }
-    
-    function preprocessRender(html, files, cb) {
-      var re = /data\-prefetchedprerender="([A-Za-z]+)\|([^"]+)"/g;
-      html = html.replace(re, function(orig, attr, url) {
-        return attr + '="' + (files[absoluteUrl(url)] || url) + '"';
-      });
-      cb(html);
-    }
-    
     function postprocess(db) {
       console.log('Postprocessing');
       var els = document.querySelectorAll("[data-prefetched='true']");
@@ -175,10 +136,6 @@
     
     function retrieveResource(db, url, el) {
       getFile(db, url, function(err, file){
-        if (err || !file) {
-          console.log('FALLBACK NEEDED', arguments);
-          return;
-        }
         // TODO: Fix mime types
         var blobUrl = URL.createObjectURL(new Blob([new Uint8Array(file.data)]));
         console.log('Rendering', url);
@@ -198,13 +155,13 @@
     
     function display(html) {
       // Ensures state is in right place
+      setState(url);
       renderDom(html);
       resetJs();
     }
     
     
     // Init
-    /*
     var html = window.localStorage.getItem(url);
     if (html != null) {
       console.log('Got from localStorage');
@@ -218,10 +175,10 @@
         // Replace images with those from DB
         postprocess(db);
       });
-    } else {*/
+    } else {
       // We have to go to the db
       // Do stuff
-      
+      console.log('Got from DB');
       connectDb(function(err, db){
         if (err) {
           fallback();
@@ -233,15 +190,12 @@
             fallback();
             return;
           }
-          setState(url);
-          preprocess(db, file.data, function(html){
-            display(html);
-            // Replace images with those from DB
-            postprocess(db);
-          });
+          display(file.data);
+          // Replace images with those from DB
+          postprocess(db);
         });
       });
-    /*}*/
+    }
     
     /*
     Testing function for browser. It's here because I don't have anywhere else to stow it
