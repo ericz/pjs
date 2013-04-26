@@ -1497,6 +1497,7 @@ Prefetcher.prototype._handleNewResource = function(url, els) {
         self._cache.writeFile(url, file.expiry, file.data);
         resource.status = Prefetcher.STATUS_COMPLETE;
         self._setPrefetchedElements(resource.elements);
+        
       }); 
     }
   });
@@ -1509,12 +1510,37 @@ Prefetcher.prototype._handleNewResource = function(url, els) {
 // Marks elements are prefetched so render.html knows what to do and update page in page cache
 Prefetcher.prototype._setPrefetchedElements = function(els){
   var pages = {};
+  
+  var self = this;
+  
   for (var i = 0; i < els.length; i++) {
     var el = els[i];
     // Stow would disable the element
     Renderer[el.tagName].stowUrl(el);
     el.dataset.prefetched = true;
     pages[el.ownerDocument._url] = true;
+    
+    // GHETTO HACK
+    
+    if (el.tagName == 'LINK' && el.dataset.href.substr(-4) == '.css') {
+      var doc = el.ownerDocument.documentElement;
+      var href = el.dataset.href;
+      el.remove();
+      (function(doc, href, _url){
+        util.xhrFile(href, function(x, data){
+          var css = data;
+          var style = document.createElement('style');
+          style.type = 'text/css';
+          if (style.styleSheet){
+            style.styleSheet.cssText = css;
+          } else {
+            style.appendChild(document.createTextNode(css));
+          }
+          doc.getElementsByTagName('head')[0].appendChild(style);
+          self._writePage(_url);
+        });
+      })(doc, href, el.ownerDocument._url);
+    }
   }
   // Update affected pages
   var pageUrls = Object.keys(pages);
