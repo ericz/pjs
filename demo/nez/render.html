@@ -1,0 +1,304 @@
+<html>
+<script>
+  
+  (function(){
+
+    // Ghetto temporary matching attributes to tagName
+    var TYPES = {
+      'IMG' : 'src',
+    };
+  
+    // Hard coded database name
+    var DB_NAME = 'pjs';
+    // Hard coded table name
+    var PAGESTORE_NAME = 'html';
+    var FILESTORE_NAME = 'files';
+    // Current schema version. This goes up when the schema changes
+    var SCHEMA_VERSION = 3;
+
+    // Chrome incorrectly interprets hashtags as part of URL for blob urls. This is ghetto hash tag method:
+    // We expect this to be an absolute URL
+    var url = window.location.hash.substring(1) || window.location.pathname.split('#').pop();
+    
+    function connectDb(cb){
+      var request = indexedDB.open(DB_NAME, SCHEMA_VERSION);
+    
+      // Ensure that we have the correct schema, if not create the correct schema
+      request.onupgradeneeded = function(e) {
+        var db = e.target.result;
+        if (db.objectStoreNames.contains(FILESTORE_NAME)) {
+          db.deleteObjectStore(FILESTORE_NAME);
+        }
+        // Tables will be keyed by file URL
+        var store = db.createObjectStore(FILESTORE_NAME, {keyPath: 'url'});
+        if (db.objectStoreNames.contains(PAGESTORE_NAME)) {
+          db.deleteObjectStore(PAGESTORE_NAME);
+        }
+        // Tables will be keyed by file URL
+        var store = db.createObjectStore(PAGESTORE_NAME, {keyPath: 'url'});
+      };
+
+      // Upon successful opening of database, store reference to the database
+      request.onsuccess = function(e) {
+        db = e.target.result;
+        db.onerror = function(e) {
+          console.log('Database error', e);
+        };
+        // DB ready to use
+        // Get and render url given in hashtag
+        return cb(null, db);
+      };
+      
+      request.onerror = function(e) {
+        console.log('Database opening error', e);
+      };
+      
+    }
+    function getPage(db, url, cb){
+      get(db, PAGESTORE_NAME, url, function(err, result){
+        if (!result) {
+          return cb(new Error('No file'), null);
+          // Successfully found valid file
+        } else {
+          return cb(null, result);
+        }
+      });
+    }
+    function getFile(db, url, cb){
+      get(db, FILESTORE_NAME, url, function(err, result){
+        if (err || !result) {
+          cb(new Error('No file'), null);
+        } else if (result.expiry > Date.now()) {
+          // Successfully found valid file
+          cb(null, result);
+        } else {
+          // Result is expired, remove it from the cache
+          // TODO: Removed expired file from cache
+          //cb(new Error('Expired'), null);
+          cb(null, result);
+        }
+      });
+    }
+    
+    function get(db, store, key, cb) {
+      var transaction = db.transaction([store]);
+      var objectStore = transaction.objectStore(store);
+      
+      // Get file keyed by provided key
+      var request = objectStore.get(key);
+      request.onerror = function(event) {
+        // Handle errors!
+        return cb(new Error(event), null);
+      };
+      request.onsuccess = function(event) {
+        // Do something with the request.result!
+        cb(null, event.target.result);
+      };
+    }
+    
+    function renderDom(html) {
+      // TODO:
+      // Switch out old images for prefetched images before rendering
+      
+      document.documentElement.innerHTML = html;
+    }
+    
+    function resetJs() {
+      var scripts = document.querySelectorAll('script');
+      for (var i = 0; i < scripts.length; i++) {
+        var oldScript = scripts[i];
+        var newScript = document.createElement('script');
+        newScript.async = oldScript.async;
+        var oldScriptSrc = oldScript.getAttribute('src');
+        if (!oldScriptSrc) {
+          oldScriptSrc = URL.createObjectURL(new Blob([oldScript.innerHTML]));
+        }
+        newScript.setAttribute('src', oldScriptSrc);
+        oldScript.parentNode.appendChild(newScript);
+        oldScript.remove();
+      }
+    }
+    
+    function postprocess(db) {
+      console.log('Postprocessing');
+      var els = document.querySelectorAll("[data-prefetched='true']");
+      
+      for (var i = 0; i < els.length; i++) {
+        var el = els[i];
+        //console.log('retrieveing', abs(Renderer[el.tagName].getStowedUrl(el)));
+        //if (!Renderer[el.tagName].isLoaded(el)) {
+          // TODO: support more than just IMG
+         // console.log('ok');
+          retrieveResource(db, absoluteUrl(Renderer[el.tagName].getStowedUrl(el)), el);
+       // }
+      }
+    }
+    
+    function retrieveResource(db, url, el) {
+      getFile(db, url, function(err, file){
+        if (err || !file) {
+          console.log('FALLBACK NEEDED', arguments[1]);
+          return;
+        }
+        // TODO: Fix mime types
+        var blobUrl = URL.createObjectURL(new Blob([new Uint8Array(file.data)]));
+        console.log('Rendering', url);
+        Renderer[el.tagName].setUrl(el, blobUrl);
+      });
+    }
+    
+    function setState(url) {
+      window.history.replaceState({}, '', url);
+    }
+    
+    function fallback() {
+      console.log('Failed to load page');
+      // Redirect user to actual page
+      // window.location.replace(url);
+    }
+    
+    function display(html) {
+      // Ensures state is in right place
+      setState(url);
+      renderDom(html);
+      resetJs();
+    }
+    
+    
+    // Init
+    var html = window.localStorage.getItem(url);
+    if (html != null) {
+      console.log('Got from localStorage');
+      // Got data from local storage yay!
+      display(html);
+      connectDb(function(err, db){
+        if (err) {
+          console.log('Could not open DB for post processing');
+          return;
+        }
+        // Replace images with those from DB
+        postprocess(db);
+      });
+    } else {
+      // We have to go to the db
+      // Do stuff
+      console.log('Got from DB');
+      connectDb(function(err, db){
+        if (err) {
+          fallback();
+          return;
+        }
+        getPage(db, url, function(err, file){
+          if (err) {
+            console.log('Could not find page');
+            fallback();
+            return;
+          }
+          display(file.data);
+          // Replace images with those from DB
+          postprocess(db);
+        });
+      });
+    }
+    
+    /*
+    Testing function for browser. It's here because I don't have anywhere else to stow it
+    function createTestLink() {
+      $.get('render.html', function(data){
+        console.log(data);
+        data = new Blob([data], {type: 'text/html'});
+        console.log(data);
+        data = URL.createObjectURL(data);
+        console.log(data);
+        $('<a></a>', {href: data + '#projects.html'}).text('asdf').appendTo('body');
+      });
+    }*/
+  
+  
+  
+    //     renderer.js
+    //     http://github.com/ericz/pjs
+    //     (c) 2013 Eric Zhang
+    //
+    // Contains functions to get and set URLs in various HTML element types
+    // We can't use shortcuts like '.src' because those don't work without a origin context for pages, which is the case for virtual DOMs that we sometime use
+
+    function absoluteUrl (url) {
+      var parser = document.createElement('a');
+      parser.href = url;
+      return parser.href;
+    }
+    
+    var Renderer = {
+      'IMG': {
+        getUrl: function(el) {
+          return el.getAttribute('src');
+        },
+        getAbsoluteUrl: function(el) {
+          return el.src;
+        },
+        setUrl: function(el, url) {
+          el.setAttribute('src', url);
+        },
+        stowUrl: function(el) {
+          el.dataset.src = el.getAttribute('src');
+          el.removeAttribute('src');
+        },
+        getStowedUrl: function(el) {
+          return el.dataset.src
+        },
+        isLoaded: function(el) {
+          return el.complete;
+        }
+      },
+      'A': {
+        getUrl: function(el) {
+          return el.getAttribute('href');
+        },
+        getAbsoluteUrl: function(el) {
+          return el.href;
+        },
+        setUrl: function(el, url) {
+          el.setAttribute('href', url);
+        },
+        stowUrl: function(el) {
+          el.dataset.href = el.getAttribute('href');
+          el.removeAttribute('href');
+        },
+        getStowedUrl: function(el) {
+          return el.dataset.href
+        },
+        isLoaded: function(el) {
+          return true;
+        }
+      },
+      'LINK': {
+        getUrl: function(el) {
+          return el.getAttribute('href');
+        },
+        getAbsoluteUrl: function(el) {
+          return el.href;
+        },
+        setUrl: function(el, url) {
+          el.setAttribute('href', url);
+        },
+        stowUrl: function(el) {
+          el.dataset.href = el.getAttribute('href');
+          el.removeAttribute('href');
+        },
+        getStowedUrl: function(el) {
+          return el.dataset.href
+        },
+        isLoaded: function(el) {
+          return false;
+        }
+      }
+    };
+    
+  })()
+  
+  
+  
+</script>
+</html>
+
