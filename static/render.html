@@ -115,7 +115,7 @@
         }
         newScript.setAttribute('src', oldScriptSrc);
         oldScript.parentNode.appendChild(newScript);
-        oldScript.remove();
+        oldScript.parentNode.removeChild(oldScript);
       }
     }
     
