@@ -11,6 +11,7 @@ pids
 logs
 results
 demo/nez/js/p.js
+demo/nez/render.html
 dist
 
 node_modules
