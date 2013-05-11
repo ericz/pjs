@@ -241,11 +241,11 @@
           el.setAttribute('src', url);
         },
         stowUrl: function(el) {
-          el.dataset.src = el.getAttribute('src');
+          el.setAttribute('data-src', el.getAttribute('src'));
           el.removeAttribute('src');
         },
         getStowedUrl: function(el) {
-          return el.dataset.src
+          return el.getAttribute('data-src');
         },
         isLoaded: function(el) {
           return el.complete;
@@ -262,11 +262,11 @@
           el.setAttribute('href', url);
         },
         stowUrl: function(el) {
-          el.dataset.href = el.getAttribute('href');
+          el.setAttribute('data-href', el.getAttribute('href'));
           el.removeAttribute('href');
         },
         getStowedUrl: function(el) {
-          return el.dataset.href
+          return el.getAttribute('data-href');
         },
         isLoaded: function(el) {
           return true;
@@ -283,11 +283,11 @@
           el.setAttribute('href', url);
         },
         stowUrl: function(el) {
-          el.dataset.href = el.getAttribute('href');
+          el.setAttribute('data-href', el.getAttribute('href'));
           el.removeAttribute('href');
         },
         getStowedUrl: function(el) {
-          return el.dataset.href
+          return el.getAttribute('data-href');
         },
         isLoaded: function(el) {
           return false;
